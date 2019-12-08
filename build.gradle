@@ -1,0 +1,61 @@
+buildscript {
+    ext.kotlin_version = '1.3.61'
+    ext.ktor_version = '1.2.6'
+    ext.logback_version = '1.2.3'
+    ext.koin_version = '2.0.1'
+
+    repositories {
+        mavenCentral()
+        maven { url 'https://plugins.gradle.org/m2/' }
+    }
+
+    dependencies {
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+        classpath "com.github.jengelman.gradle.plugins:shadow:2.0.1"
+    }
+}
+
+plugins {
+    id "org.jetbrains.kotlin.jvm" version '1.3.61'
+}
+
+apply plugin: 'java'
+apply plugin: 'com.github.johnrengelman.shadow'
+apply plugin: 'application'
+
+group 'it.aliut.homemanager'
+version '1.0'
+
+mainClassName = 'io.ktor.server.netty.EngineMain'
+
+sourceCompatibility = 1.8
+
+shadowJar {
+    baseName = 'homemanager-users'
+    classifier = null
+    version = null
+}
+
+repositories {
+    jcenter()
+}
+
+dependencies {
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
+    compile "io.ktor:ktor-server-netty:$ktor_version"
+    compile "io.ktor:ktor-gson:$ktor_version"
+    compile "ch.qos.logback:logback-classic:$logback_version"
+    compile 'org.litote.kmongo:kmongo-coroutine:3.11.2'
+
+    implementation "org.koin:koin-ktor:$koin_version"
+
+    testCompile "io.ktor:ktor-server-tests:$ktor_version"
+    testImplementation "org.koin:koin-test:$koin_version"
+}
+
+compileKotlin {
+    kotlinOptions.jvmTarget = "1.8"
+}
+compileTestKotlin {
+    kotlinOptions.jvmTarget = "1.8"
+}
