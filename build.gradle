@@ -3,6 +3,7 @@ buildscript {
     ext.ktor_version = '1.2.6'
     ext.logback_version = '1.2.3'
     ext.koin_version = '2.0.1'
+    ext.kmongo_version = '3.11.2'
 
     repositories {
         mavenCentral()
@@ -45,7 +46,7 @@ dependencies {
     compile "io.ktor:ktor-server-netty:$ktor_version"
     compile "io.ktor:ktor-gson:$ktor_version"
     compile "ch.qos.logback:logback-classic:$logback_version"
-    compile 'org.litote.kmongo:kmongo-coroutine:3.11.2'
+    compile "org.litote.kmongo:kmongo-coroutine:$kmongo_version"
 
     implementation "org.koin:koin-ktor:$koin_version"
 
