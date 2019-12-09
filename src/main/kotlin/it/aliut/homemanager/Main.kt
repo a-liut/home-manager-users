@@ -35,6 +35,7 @@ fun Application.main() {
     install(StatusPages) {
         exception<Throwable> { cause ->
             call.respond(HttpStatusCode.InternalServerError, ApiResponse(null, cause.message))
+            throw cause
         }
 
         exception<ResourceNotFoundException> { cause ->
