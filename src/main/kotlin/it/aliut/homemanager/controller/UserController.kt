@@ -17,11 +17,11 @@ fun Routing.users() {
 
     route("/users") {
         post {
-            val user = call.receive(User::class)
+            val user = call.receive<User>()
 
-            userRepository.add(user)
+            val newUser = userRepository.add(user)
 
-            call.respond(HttpStatusCode.OK)
+            call.respond(HttpStatusCode.OK, newUser)
         }
     }
 
