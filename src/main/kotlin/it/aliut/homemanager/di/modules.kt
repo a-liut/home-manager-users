@@ -10,7 +10,7 @@ val repositoryModule = module {
 }
 
 val databaseModule = module {
-    single { KMongo.createClient("mongodb://mongo:27017").coroutine.getDatabase("home-manager-users") }
+    single { KMongo.createClient("mongodb://localhost:27017").coroutine.getDatabase("home-manager-users") }
 }
 
 val modules = listOf(repositoryModule, databaseModule)

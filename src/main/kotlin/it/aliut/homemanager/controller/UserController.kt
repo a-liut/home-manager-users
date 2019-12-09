@@ -8,8 +8,11 @@ import io.ktor.routing.Routing
 import io.ktor.routing.get
 import io.ktor.routing.post
 import io.ktor.routing.route
+import it.aliut.homemanager.exception.InvalidDataException
+import it.aliut.homemanager.exception.ResourceNotFoundException
 import it.aliut.homemanager.model.User
 import it.aliut.homemanager.repository.UserRepository
+import it.aliut.homemanager.response.ApiResponse
 import org.koin.ktor.ext.inject
 
 fun Routing.users() {
@@ -21,7 +24,7 @@ fun Routing.users() {
 
             val newUser = userRepository.add(user)
 
-            call.respond(HttpStatusCode.OK, newUser)
+            call.respond(HttpStatusCode.Created, ApiResponse(newUser, null))
         }
     }
 
@@ -30,17 +33,12 @@ fun Routing.users() {
             val id = call.parameters["id"]
 
             if (id.isNullOrEmpty()) {
-                call.respond(HttpStatusCode.BadRequest, "Invalid id")
-                return@get
+                throw InvalidDataException("Invalid Id")
             }
 
-            val user = userRepository.getById(id)
+            val user = userRepository.getById(id) ?: throw ResourceNotFoundException("User $id not found.")
 
-            if (user != null) {
-                call.respond(user)
-            } else {
-                call.respond(HttpStatusCode.NotFound)
-            }
+            call.respond(HttpStatusCode.OK, ApiResponse(user, null))
         }
     }
 }
