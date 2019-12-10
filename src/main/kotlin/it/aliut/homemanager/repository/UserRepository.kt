@@ -8,6 +8,8 @@ class UserRepository(mongoDatabase: CoroutineDatabase) {
 
     private val usersCollection = mongoDatabase.getCollection<User>("users")
 
+    suspend fun getAll(): List<User> = usersCollection.find().toList()
+
     suspend fun getById(id: String): User? = usersCollection.findOneById(id)
 
     suspend fun add(user: User): User {

@@ -20,6 +20,12 @@ fun Routing.users() {
     val userRepository: UserRepository by inject()
 
     route("/users") {
+        get {
+            val list = userRepository.getAll()
+
+            call.respond(HttpStatusCode.OK, list)
+        }
+
         post {
             val params = call.receiveOrNull<CreateUserParameters>() ?: throw InvalidDataException("Missing parameters")
 
