@@ -26,7 +26,7 @@ fun Routing.users() {
             params.name ?: throw InvalidDataException("Missing name")
 
             if (userRepository.getByName(params.name) != null) {
-                throw InvalidDataException("User with name ${params.name} already exists")
+                throw InvalidDataException("User ${params.name} already exists")
             }
 
             val user = User(
