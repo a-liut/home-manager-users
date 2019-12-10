@@ -10,10 +10,12 @@ import io.ktor.routing.post
 import io.ktor.routing.route
 import it.aliut.homemanager.exception.InvalidDataException
 import it.aliut.homemanager.exception.ResourceNotFoundException
-import it.aliut.homemanager.model.User
 import it.aliut.homemanager.parameters.CreateUserParameters
 import it.aliut.homemanager.repository.UserRepository
 import it.aliut.homemanager.response.ApiResponse
+import it.aliut.homemanager.usecase.GetSingleUserUseCase
+import it.aliut.homemanager.usecase.GetUsersUseCase
+import it.aliut.homemanager.usecase.RegisterUserUseCase
 import org.koin.ktor.ext.inject
 
 fun Routing.users() {
@@ -21,7 +23,8 @@ fun Routing.users() {
 
     route("/users") {
         get {
-            val list = userRepository.getAll()
+            val useCase = GetUsersUseCase(userRepository)
+            val list = useCase.start()
 
             call.respond(HttpStatusCode.OK, list)
         }
@@ -29,32 +32,20 @@ fun Routing.users() {
         post {
             val params = call.receiveOrNull<CreateUserParameters>() ?: throw InvalidDataException("Missing parameters")
 
-            params.name ?: throw InvalidDataException("Missing name")
+            val useCase = RegisterUserUseCase(params, userRepository)
+            val user = useCase.start()
 
-            if (userRepository.getByName(params.name) != null) {
-                throw InvalidDataException("User ${params.name} already exists")
-            }
-
-            val user = User(
-                name = params.name,
-                email = params.email
-            )
-
-            val newUser = userRepository.add(user)
-
-            call.respond(HttpStatusCode.Created, ApiResponse(newUser, null))
+            call.respond(HttpStatusCode.Created, ApiResponse(user, null))
         }
     }
 
     route("/users/{id}") {
         get {
-            val id = call.parameters["id"]
+            val id = call.parameters["id"] ?: throw InvalidDataException("Missing Id")
 
-            if (id.isNullOrEmpty()) {
-                throw InvalidDataException("Invalid Id")
-            }
+            val useCase = GetSingleUserUseCase(id, userRepository)
 
-            val user = userRepository.getById(id) ?: throw ResourceNotFoundException("User $id not found.")
+            val user = useCase.start() ?: throw ResourceNotFoundException("User $id not found.")
 
             call.respond(HttpStatusCode.OK, ApiResponse(user, null))
         }
