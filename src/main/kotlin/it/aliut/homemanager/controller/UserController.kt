@@ -26,7 +26,7 @@ fun Routing.users() {
             val useCase = GetUsersUseCase(userRepository)
             val list = useCase.start()
 
-            call.respond(HttpStatusCode.OK, list)
+            call.respond(HttpStatusCode.OK, ApiResponse(list, null))
         }
 
         post {
